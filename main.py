@@ -46,6 +46,22 @@ def Journey_Log():
     Convert_To_CSV(data, 'Journey_Log.csv')
     Export_CSV_To_Desktop('Journey_Log.csv', '')
 
+def Hard_Time():
+    pass
+
+def Logbook():
+    #call Airframe_Logbook(), Right_Hand_Engine_Logbook(), and Right_Hand_Engine_Logbook() from here
+    pass
+
+def Airframe_Logbook():
+    pass
+
+def Left_Hand_Engine_Logbook():
+    pass
+
+def Right_Hand_Engine_Logbook():
+    pass
+
 #Journey_Log
 def Filter_Date_Total(data_array):
     filtered_data = [data_entry for data_entry in data_array if data_entry.get("DATE") != "T0TAL"]
