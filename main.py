@@ -74,6 +74,6 @@ def Change_Value_In_Operation_Type(data):
     return data
 
 if __name__ == "__main__":
-    # Aircraft_Directives()
+    Aircraft_Directives()
     Journey_Log()
 
