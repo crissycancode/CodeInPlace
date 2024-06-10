@@ -31,28 +31,32 @@ def Read_File(filename):
 
 def Aircraft_Directives():
     input_file = 'Aircraft_Directives.csv'
-    output_file = 'aircraft_directives.json'
+    output_file = 'Aircraft_Directives.json'
     Convert_To_Json(input_file, output_file)
 
 def Journey_Log():
     input_file = 'Journey_Log.csv'
-    output_file = 'journey_log.json'
+    output_file = 'Journey_Log.json'
     Convert_To_Json(input_file, output_file)
-    data = Read_File('journey_log.json')
+    data = Read_File('Journey_Log.json')
     data = Filter_Date_Total(data)
     data = Filter_Flight_Empty_Hours(data)
     data = Fill_Empty_Dates(data)
-    Convert_To_CSV(data, 'filtered_data.csv')
-    Export_CSV_To_Desktop('filtered_data.csv', '')
+    data = Change_Value_In_Operation_Type(data)
+    Convert_To_CSV(data, 'Journey_Log.csv')
+    Export_CSV_To_Desktop('Journey_Log.csv', '')
 
+#Journey_Log
 def Filter_Date_Total(data_array):
     filtered_data = [data_entry for data_entry in data_array if data_entry.get("DATE") != "T0TAL"]
     return filtered_data
 
+#Journey_Log
 def Filter_Flight_Empty_Hours(data_array):
     filtered_data = [data_entry for data_entry in data_array if data_entry.get("FLIGHT_HOURS") != "0:00"]
     return filtered_data
 
+#Journey_Log
 def Fill_Empty_Dates(data):
     last_non_empty_date = None
 
@@ -67,10 +71,11 @@ def Fill_Empty_Dates(data):
     
     return data
 
+#Journey_Log
 def Change_Value_In_Operation_Type(data):
     for data_entry in data:
-        if "TOTAL_CYCLES" in data_entry:
-            data_entry["TOTAL_CYCLES"] = "NIGHT"
+        if "OPERATION_TYPE" in data_entry:
+            data_entry["OPERATION_TYPE"] = "NIGHT"
     return data
 
 if __name__ == "__main__":
