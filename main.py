@@ -25,8 +25,11 @@ def Export_CSV_To_Desktop(source_file, destination_folder):
     shutil.copy2(source_file, destination_path)
 
 def Read_File(filename):
-    with open(filename, 'r') as file:
-        data = json.load(file)
+    data = []
+    with open(filename, 'r', newline='') as file:
+        csv_reader = csv.DictReader(file)
+        for row in csv_reader:
+            data.append(row)
     return data
 
 def Aircraft_Directives():
@@ -35,15 +38,19 @@ def Aircraft_Directives():
     Convert_To_Json(input_file, output_file)
 
 def Journey_Log():
-    input_file = 'Journey_Log.csv'
-    output_file = 'Journey_Log.json'
-    Convert_To_Json(input_file, output_file)
-    data = Read_File('Journey_Log.json')
+    input_file = 'Journey_Log.csv' #string for input filename
+    output_file = 'Journey_Log.json' #string for output filename
+
+    data = Read_File('Journey_Log.csv')
     data = Filter_Date_Total(data)
     data = Filter_Flight_Empty_Hours(data)
     data = Fill_Empty_Dates(data)
     data = Change_Value_In_Operation_Type(data)
+    
     Convert_To_CSV(data, 'Journey_Log.csv')
+    Convert_To_Json(input_file, output_file)
+    
+    
     Export_CSV_To_Desktop('Journey_Log.csv', '')
 
 def Hard_Time():
