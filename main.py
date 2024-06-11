@@ -38,20 +38,20 @@ def Aircraft_Directives():
     Convert_To_Json(input_file, output_file)
 
 def Journey_Log():
-    input_file = 'Journey_Log.csv' #string for input filename
-    output_file = 'Journey_Log.json' #string for output filename
+    input_filename = 'Journey_Log.csv' #string for input filename
+    output_filename = 'Journey_Log.json' #string for output filename
 
-    data = Read_File('Journey_Log.csv')
+    data = Read_File('Journey_Log.csv') #file to read
+    #formatings
     data = Filter_Date_Total(data)
     data = Filter_Flight_Empty_Hours(data)
     data = Fill_Empty_Dates(data)
     data = Change_Value_In_Operation_Type(data)
     
-    Convert_To_CSV(data, 'Journey_Log.csv')
-    Convert_To_Json(input_file, output_file)
+    Convert_To_CSV(data, 'Journey_Log.csv') #modified data
+    Convert_To_Json(input_filename, output_filename)
     
-    
-    Export_CSV_To_Desktop('Journey_Log.csv', '')
+    Export_CSV_To_Desktop('Journey_Log.csv', '') #remove this later
 
 def Hard_Time():
     pass
@@ -99,6 +99,8 @@ def Change_Value_In_Operation_Type(data):
     for data_entry in data:
         if "OPERATION_TYPE" in data_entry:
             data_entry["OPERATION_TYPE"] = "NIGHT"
+
+            #somthing
     return data
 
 if __name__ == "__main__":
