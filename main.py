@@ -1,57 +1,24 @@
-import pandas, csv, json, os, shutil
+from file_handler import FileHandler
 
-
-def Convert_To_Json(file, file_name):
-    data = pandas.read_csv(file)
-    data = data.dropna(axis = 1, how = 'all')
-
-    json_data = data.to_json(orient = 'records')
-
-    with open(file_name, 'w') as json_file:
-        json_file.write(json_data)
-
-    print(f"Successfully coverted to JSON, see {file_name}")
-
-def Convert_To_CSV(data, filename):
-    header = data[0].keys() if data else []
-    with open(filename, 'w', newline='') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames = header)
-        writer.writeheader()
-        writer.writerows(data)
-
-def Export_CSV_To_Desktop(source_file, destination_folder):
-    desktop_path = os.path.join(os.path.expanduser('~'), 'Desktop')
-    destination_path = os.path.join(desktop_path, destination_folder, os.path.basename(source_file))
-    shutil.copy2(source_file, destination_path)
-
-def Read_File(filename):
-    data = []
-    with open(filename, 'r', newline='') as file:
-        csv_reader = csv.DictReader(file)
-        for row in csv_reader:
-            data.append(row)
-    return data
-
-def Aircraft_Directives():
-    input_file = 'Aircraft_Directives.csv'
-    output_file = 'Aircraft_Directives.json'
-    Convert_To_Json(input_file, output_file)
+def Airworthiness_Directives():
+    input_file = 'Airworthiness_Directives.csv'
+    output_file = 'Airworthiness_Directives.json'
+    FileHandler.Convert_To_Json(input_file, output_file)
 
 def Journey_Log():
     input_filename = 'Journey_Log.csv' #string for input filename
     output_filename = 'Journey_Log.json' #string for output filename
 
-    data = Read_File('Journey_Log.csv') #file to read
+    data = FileHandler.Read_File('Journey_Log.csv') #file to read
     #formatings
     data = Filter_Date_Total(data)
     data = Filter_Flight_Empty_Hours(data)
     data = Fill_Empty_Dates(data)
     data = Change_Value_In_Operation_Type(data)
     
-    Convert_To_CSV(data, 'Journey_Log.csv') #modified data
-    Convert_To_Json(input_filename, output_filename)
-    
-    Export_CSV_To_Desktop('Journey_Log.csv', '') #remove this later
+    FileHandler.Convert_To_CSV(data, 'Journey_Log.csv') #modified data
+    FileHandler.Convert_To_Json(input_filename, output_filename)
+    FileHandler.Export_CSV_To_Desktop('Journey_Log.csv', '') #remove this later
 
 def Hard_Time():
     pass
@@ -103,7 +70,10 @@ def Change_Value_In_Operation_Type(data):
             #somthing
     return data
 
-if __name__ == "__main__":
-    Aircraft_Directives()
+def Main():
+    # Airworthiness_Directives()
     Journey_Log()
+
+if __name__ == "__main__":
+    Main()
 
