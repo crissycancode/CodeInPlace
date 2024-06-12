@@ -10,11 +10,11 @@ This project ... [purpose of the project]
 - File Handler
 - Main
 
-1. **Journey Log**
-    *Recording Specific Time*:
-        - __Date:__ The specific date of the flight.
-        - __Off B (Off Blocks):__ The time when the aircraft starts to move from its parking position.
-        - __TO (Take Off):__ The time when the aircraft becomes airborne.
-        - __OG (On Ground):__ The time when the aircraft lands.
-        - __On B (On Blocks):__ The time when the aircraft comes to a complete stop at its parking position.
+1. **Journey Log**<br>
+    *Recording Specific Time*:<br>
+        - __Date:__ The specific date of the flight.<br>
+        - __Off B (Off Blocks):__ The time when the aircraft starts to move from its parking position.<br>
+        - __TO (Take Off):__ The time when the aircraft becomes airborne.<br>
+        - __OG (On Ground):__ The time when the aircraft lands.<br>
+        - __On B (On Blocks):__ The time when the aircraft comes to a complete stop at its parking position.<br>
 
