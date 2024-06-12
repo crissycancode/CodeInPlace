@@ -41,7 +41,7 @@ def Remove_Empty_Flight_Hours(data):
     Return:
         updated_data: Data entied with empty values FLIGHT HOURS removed.
     """
-    updated_data = [data_entry for data_entry in data if data_entry.get("FLIGHT HOURS") != "0:00"]
+    updated_data = [data_entry for data_entry in data if data_entry.get("FLIGHT HOURS") != "0"]
     return updated_data
 
 
@@ -54,9 +54,26 @@ def Standardize_Operation_Type(data):
         list: Data entries with standardized 'OPERATION_TYPE' values.
     """
     for data_entry in data:
-        if "OPERATION_TYPE" in data_entry:
-            if data_entry["OPERATION_TYPE"] in ("N"):
-                data_entry["OPERATION_TYPE"] = "NIGHT"
+        if "OPERATION" in data_entry:
+            if data_entry["OPERATION"] in ("N"):
+                data_entry["OPERATION"] = "NIGHT"
             else:
-                data_entry["OPERATION_TYPE"] = "-"
+                data_entry["OPERATION"] = "-"
     return data
+
+def Fillin_Flight_Hours(data):
+    """
+    Fillin the "FILIGHT HOURS"
+    Args:
+        data (list): List of data entries (dictionaries).
+    Returns:
+        list: Data entries with standardized 'FILIGHT HOURS' values.
+    """
+    for data_entry in data:
+
+        flight_hours = int(data_entry["FH(HOURS)"]) * 60
+        flight_minutes = int(data_entry["FH(MINUTES)"].replace(":", ""))
+        data_entry["FLIGHT HOURS"] = str(flight_hours + flight_minutes)
+        #this needs to be displayed as "1:08 (1H 08MIN)" create a function that will style it this way but not save
+    return data
+
