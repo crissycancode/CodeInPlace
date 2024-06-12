@@ -1,24 +1,25 @@
-from file_handler import FileHandler
+# from file_handler import FileHandler
+from file_handler import Convert_To_CSV, Convert_To_Json, Read_File, Export_CSV_To_Desktop
 
 def Airworthiness_Directives():
     input_file = 'Airworthiness_Directives.csv'
     output_file = 'Airworthiness_Directives.json'
-    FileHandler.Convert_To_Json(input_file, output_file)
+    Convert_To_Json(input_file, output_file)
 
 def Journey_Log():
     input_filename = 'Journey_Log.csv' #string for input filename
     output_filename = 'Journey_Log.json' #string for output filename
 
-    data = FileHandler.Read_File('Journey_Log.csv') #file to read
+    data = Read_File('Journey_Log.csv') #file to read
     #formatings
     data = Filter_Date_Total(data)
     data = Filter_Flight_Empty_Hours(data)
     data = Fill_Empty_Dates(data)
     data = Change_Value_In_Operation_Type(data)
     
-    FileHandler.Convert_To_CSV(data, 'Journey_Log.csv') #modified data
-    FileHandler.Convert_To_Json(input_filename, output_filename)
-    FileHandler.Export_CSV_To_Desktop('Journey_Log.csv', '') #remove this later
+    Convert_To_CSV(data, 'Journey_Log.csv') #modified data
+    Convert_To_Json(input_filename, output_filename)
+    Export_CSV_To_Desktop('Journey_Log.csv', '') #remove this later
 
 def Hard_Time():
     pass
