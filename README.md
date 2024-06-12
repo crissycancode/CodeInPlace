@@ -12,10 +12,12 @@ This project ... [purpose of the project]
 
 1. ### **Journey Log**<br>
     __Recording Specific Time:__<br>
-    *These entries record exact times when certain events occur:*<br>
+    *(Records exact times when certain events occur)*<br>
         - __Date:__ The specific date of the flight.<br>
         - __Off B (Off Blocks):__ The time when the aircraft starts to move from its parking position.<br>
         - __TO (Take Off):__ The time when the aircraft becomes airborne.<br>
         - __OG (On Ground):__ The time when the aircraft lands.<br>
         - __On B (On Blocks):__ The time when the aircraft comes to a complete stop at its parking position.<br>
+        
+2. ### **Airworthiness Directives**<br>
 
