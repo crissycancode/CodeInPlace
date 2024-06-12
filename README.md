@@ -1,4 +1,4 @@
-## Code in Place Project
+# Code in Place Project
 
 This project ... [purpose of the project]
 
@@ -11,7 +11,8 @@ This project ... [purpose of the project]
 - Main
 
 1. **Journey Log**<br>
-    *Recording Specific Time*:<br>
+    ## *Recording Specific Time*:<br>
+    *These entries record exact times when certain events occur:*<br>
         - __Date:__ The specific date of the flight.<br>
         - __Off B (Off Blocks):__ The time when the aircraft starts to move from its parking position.<br>
         - __TO (Take Off):__ The time when the aircraft becomes airborne.<br>
