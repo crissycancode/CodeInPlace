@@ -20,7 +20,7 @@ This project ... [purpose of the project]
         - __On B (On Blocks):__ The time when the aircraft comes to a complete stop at its parking position.<br>
     
     __Counting Intervals:__<br>
-    *(These entries measure durations or cumulative totals:)*<br>
+    *(Measures durations or cumulative totals)*<br>
         - __C (Cycles):__ Counts the number of flight cycles (one takeoff and one landing).<br>
         - __FH (Flight Hours):__ Measures the duration of time the aircraft is in the air from takeoff to landing for each flight segment.<br>
         - __BT (Block Time):__ Measures the total duration from Off Blocks to On Blocks, including taxiing, flight time, and any other movement time.<br>
