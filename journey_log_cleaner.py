@@ -45,22 +45,6 @@ def Remove_Empty_Flight_Hours(data):
     return updated_data
 
 
-def Standardize_Operation_Type(data):
-    """
-    Standardize 'OPERATION_TYPE' values to 'NIGHT' if they are 'N'.
-    Args:
-        data (list): List of data entries (dictionaries).
-    Returns:
-        list: Data entries with standardized 'OPERATION_TYPE' values.
-    """
-    for data_entry in data:
-        if "OPERATION" in data_entry:
-            if data_entry["OPERATION"] in ("N"):
-                data_entry["OPERATION"] = "NIGHT"
-            else:
-                data_entry["OPERATION"] = "-"
-    return data
-
 def Fill_In_Flight_Hours(data):
     """
     Fillin the "FILIGHT HOURS"

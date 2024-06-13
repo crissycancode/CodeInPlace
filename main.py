@@ -9,12 +9,12 @@ def Airworthiness_Directives():
 
 def Journey_Log():
     
-    data = Read_File('Journey_Log.csv') #file to read
+    data = Read_File('Journey_Log.csv') #read the file
+    #customizations start here
     data = Fill_In_Flight_Hours(data) #fillin the flight hours using values in FH(HOURS) and FH(MINUTES)
     data = Remove_Empty_Flight_Hours(data) #remove blank flight hours
     data = Backfill_Empty_Dates(data) #assign dates
     data = Remove_Total_Summary_Rows(data) #remove the rows with values for computing total summary
-    data = Standardize_Operation_Type(data) #night operation with "Night" and leave day operation with "-"
     data = Remove_Column_From_Data(data, "FH(HOURS)") #no longer needed after filling in the flight hours
     data = Remove_Column_From_Data(data, "FH(MINUTES)") #no longer needed after filling in the flight hours
     data = Fill_In_Block_Time(data)
@@ -27,9 +27,28 @@ def Journey_Log():
     data = Remove_Column_From_Data(data, "TOTB(HOURS)") #no longer needed after filling in the block time
     data = Remove_Column_From_Data(data, "TOTB(MINUTES)") #no longer needed after filling in the block time
 
-    table = Create_Pretty_Table(data)
+    #table starts here
+    header_mapping = {
+        "DATE": "Date",
+        "OPERATION": "Op",
+        "SECTOR FROM": "From",
+        "SECTOR TO": "To",
+        "OFF BLOCKS": "OffB",
+        "TAKE OFF": "TO",
+        "ON GROUND": "OG",
+        "ON BLOCKS": "OnB",
+        "CYCLE": "Cyc",
+        "FLIGHT HOURS": "FH",
+        "BLOCK TIME": "BT",
+        "TOTAL FLYING HOURS": "Tot FH",
+        "TOTAL BLOCK TIME": "Tot BT",
+        "TOTAL CYCLE": "Tot C"
+    }
+
+    table = Create_Pretty_Table(data, header_mapping)
     print(table)
     
+    # Use these functions for file exports
     # Convert_To_CSV(data, 'Journey_Log.csv') #modified data
     # input_filename = 'Journey_Log.csv' #string for input filename
     # output_filename = 'Journey_Log.json' #string for output filename
@@ -37,14 +56,17 @@ def Journey_Log():
     # Export_CSV_To_Desktop('Journey_Log.csv', '') #remove this later
 
 
-def Create_Pretty_Table(data):
+def Create_Pretty_Table(data, header_mapping):
     table = PrettyTable()
-    table.max_width = 150  # Adjust as needed
+    table.max_width = 150  #adjust as needed
     if data:
-        header = data[0].keys()
-        table.field_names = header #must be unique
+        default_header = data[0].keys()
+        new_headers = [header_mapping.get(header, header) for header in default_header]
+        table.field_names = new_headers  #set the custom header
+
         for row in data:
-            table.add_row(row.values())
+            new_row = {header_mapping.get(key, key): value for key, value in row.items()} #updated the row using the new header
+            table.add_row(new_row.values())
     return table
 
 def Hard_Time():
