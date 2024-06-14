@@ -10,35 +10,41 @@ def Backfill_Empty_Dates(data):
         data(list): Data entries with empty 'DATE' fields filled.
     """
     data_frame = pandas.DataFrame(data)
-    data_frame['DATE'].replace('', pandas.NA, inplace=True)
-    data_frame['DATE'] = data_frame['DATE'].fillna(method='ffill')
+    data_frame['DATE'] = data_frame['DATE'].replace('', pandas.NA)
+    data_frame['DATE'] = data_frame['DATE'].ffill()
     data = data_frame.to_dict(orient='records')
 
     return data
 
 
+def Remove_Row_From_Table(data, key, value): #try to put this to a different file
+    data_frame = pandas.DataFrame(data)
+    data_frame = data_frame[data_frame[key] != value]
+    updated_data = data_frame.to_dict(orient='records')
+
+    return updated_data
+
+
 def Remove_Total_Summary_Rows(data): 
     """
-    Removes rows that summarize the totals for the day.
+    Removes rows with that contains "T0TAL -- wala -- total for the day"
     Args:
         data(list): List of data entries
     Returns:
-        updated_data: Data entires with total summary rows removed.
+        updated data
     """
-    updated_data = [data_entry for data_entry in data if data_entry.get("DATE") != "T0TAL"]
-    return updated_data
+    return Remove_Row_From_Table(data, 'DATE', "T0TAL")
 
 
 def Remove_Empty_Flight_Hours(data):
     """
-    Remove rows with FLIGHT_HOURS that has empty value.
+    Remove rows with FLIGHT HOURS that has 0 value.
     Args:
         data(list): List of data entries
     Return:
-        updated_data: Data entied with empty values FLIGHT HOURS removed.
+        updated data
     """
-    updated_data = [data_entry for data_entry in data if data_entry.get("FLIGHT HOURS") != "0"]
-    return updated_data
+    return Remove_Row_From_Table(data, 'FLIGHT HOURS', "0")
 
 
 def Fill_In_Flight_Hours(data):
@@ -47,18 +53,23 @@ def Fill_In_Flight_Hours(data):
     Args:
         data (list): List of data entries (dictionaries).
     Returns:
-        list: Data entries with standardized 'FILIGHT HOURS' values.
+        updated data with filled in flight hours
     """
-    for data_entry in data:
-        fh_hours = data_entry.get("FH(HOURS)", "").strip()
-        fh_minutes = data_entry.get("FH(MINUTES)", "").strip().replace(":", "")
+    
+    data_frame = pandas.DataFrame(data)
 
-        flight_hours = int(fh_hours) if fh_hours.isdigit() else 0
-        flight_minutes = int(fh_minutes) if fh_minutes.isdigit() else 0
-        flight_hours = (flight_hours * 60) + flight_minutes
+    #convert from hours to minutes, replace empty cells with '0' to make sure there is no null value, cast to interger
+    data_frame['FH(HOURS)'] = data_frame['FH(HOURS)'].str.strip().replace('', '0').astype(int) 
+    #remove ':', replace empty cells with '0' to make sure there is no null value, cast to interger
+    data_frame['FH(MINUTES)'] = data_frame['FH(MINUTES)'].str.strip().str.replace(':', '').replace('', '0').astype(int)
 
-        data_entry["FLIGHT HOURS"] = str(flight_hours) #this needs to be displayed as "1:08 (1H 08MIN)" create a function that will style it this way but not save
-    return data
+    #compute the fliying hours in minutes
+    data_frame['FLIGHT HOURS'] = (data_frame['FH(HOURS)'] * 60 + data_frame['FH(MINUTES)']).astype(str)
+
+    updated_data = data_frame.to_dict(orient='records')
+
+    return updated_data
+    
 
 def Fill_In_Block_Time(data):
     """
@@ -78,6 +89,7 @@ def Fill_In_Block_Time(data):
 
         data_entry["BLOCK TIME"] = str(block_time)
         #this needs to be displayed as "1:08 (1H 08MIN)" create a function that will style it this way but not save
+
     return data
 
 def Fill_In_Total_Flying_Hours(data):
