@@ -1,6 +1,6 @@
 from prettytable import PrettyTable
 from file_handler import  Read_File,  Remove_Column_From_Data, Convert_To_CSV, Convert_To_Json, Export_CSV_To_Desktop
-from journey_log_cleaner import Backfill_Empty_Dates, Remove_Total_Summary_Rows, Remove_Empty_Flight_Hours, Standardize_Operation_Type, Fill_In_Flight_Hours, Fill_In_Block_Time, Fill_In_Total_Flying_Hours, Fill_In_Total_Block_Time
+from journey_log_cleaner import Backfill_Empty_Dates, Remove_Total_Summary_Rows, Remove_Empty_Flight_Hours, Fill_In_Flight_Hours, Fill_In_Block_Time, Fill_In_Total_Flying_Hours, Fill_In_Total_Block_Time
 
 def Airworthiness_Directives():
     input_file = 'Airworthiness_Directives.csv'
@@ -13,7 +13,7 @@ def Journey_Log():
     #customizations start here
     data = Fill_In_Flight_Hours(data) #fillin the flight hours using values in FH(HOURS) and FH(MINUTES)
     data = Remove_Empty_Flight_Hours(data) #remove blank flight hours
-    data = Backfill_Empty_Dates(data) #assign dates
+    data = Backfill_Empty_Dates(data)
     data = Remove_Total_Summary_Rows(data) #remove the rows with values for computing total summary
     data = Remove_Column_From_Data(data, "FH(HOURS)") #no longer needed after filling in the flight hours
     data = Remove_Column_From_Data(data, "FH(MINUTES)") #no longer needed after filling in the flight hours

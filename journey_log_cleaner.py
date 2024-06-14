@@ -1,3 +1,5 @@
+import pandas
+
 
 def Backfill_Empty_Dates(data):
     """
@@ -7,17 +9,11 @@ def Backfill_Empty_Dates(data):
     Returns: 
         data(list): Data entries with empty 'DATE' fields filled.
     """
-    last_non_empty_date = None
+    data_frame = pandas.DataFrame(data)
+    data_frame['DATE'].replace('', pandas.NA, inplace=True)
+    data_frame['DATE'] = data_frame['DATE'].fillna(method='ffill')
+    data = data_frame.to_dict(orient='records')
 
-    for data_entry in data:
-        date_value = data_entry.get("DATE")
-        
-        if not date_value:
-            if last_non_empty_date:
-                data_entry["DATE"] = last_non_empty_date
-        else:
-            last_non_empty_date = date_value
-    
     return data
 
 
