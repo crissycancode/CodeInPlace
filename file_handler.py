@@ -35,11 +35,8 @@ def Convert_To_CSV(data, csv_file_name):
     
 
 def Read_File(filename):
-    data = []
-    with open(filename, 'r', newline='') as file:
-        csv_reader = csv.DictReader(file)
-        for row in csv_reader:
-            data.append(row)
+    data_frame = pandas.read_csv(filename)
+    data = data_frame.to_dict(orient='records')
     return data
 
 

@@ -17,13 +17,13 @@ def Journey_Log():
     data = Remove_Total_Summary_Rows(data) #remove the rows with values for computing total summary
     data = Remove_Column_From_Data(data, "FH(HOURS)") #no longer needed after filling in the flight hours
     data = Remove_Column_From_Data(data, "FH(MINUTES)") #no longer needed after filling in the flight hours
-    data = Fill_In_Block_Time(data)
+    # data = Fill_In_Block_Time(data)
     data = Remove_Column_From_Data(data, "BT(HOURS)") #no longer needed after filling in the block time
     data = Remove_Column_From_Data(data, "BT(MINUTES)") #no longer needed after filling in the block time
-    data = Fill_In_Total_Flying_Hours(data)
+    # data = Fill_In_Total_Flying_Hours(data)
     data = Remove_Column_From_Data(data, "TFH(HOURS)") #no longer needed after filling in the block time
     data = Remove_Column_From_Data(data, "TFH(MINUTES)") #no longer needed after filling in the block time
-    data = Fill_In_Total_Block_Time(data)
+    # data = Fill_In_Total_Block_Time(data)
     data = Remove_Column_From_Data(data, "TOTB(HOURS)") #no longer needed after filling in the block time
     data = Remove_Column_From_Data(data, "TOTB(MINUTES)") #no longer needed after filling in the block time
 
@@ -46,7 +46,7 @@ def Journey_Log():
     }
 
     table = Create_Pretty_Table(data, header_mapping)
-    print(table)
+    # print(table)
     
     # Use these functions for file exports
     # Convert_To_CSV(data, 'Journey_Log.csv') #modified data

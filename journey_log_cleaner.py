@@ -1,4 +1,12 @@
 import pandas
+import numpy
+
+def Delete_Row_From_Table(data, key, value): #try to move this to a different file
+    data_frame = pandas.DataFrame(data)
+    data_frame = data_frame[data_frame[key] != value]
+    updated_data = data_frame.to_dict(orient='records')
+
+    return updated_data
 
 
 def Backfill_Empty_Dates(data):
@@ -17,14 +25,6 @@ def Backfill_Empty_Dates(data):
     return data
 
 
-def Remove_Row_From_Table(data, key, value): #try to put this to a different file
-    data_frame = pandas.DataFrame(data)
-    data_frame = data_frame[data_frame[key] != value]
-    updated_data = data_frame.to_dict(orient='records')
-
-    return updated_data
-
-
 def Remove_Total_Summary_Rows(data): 
     """
     Removes rows with that contains "T0TAL -- wala -- total for the day"
@@ -33,7 +33,7 @@ def Remove_Total_Summary_Rows(data):
     Returns:
         updated data
     """
-    return Remove_Row_From_Table(data, 'DATE', "T0TAL")
+    return Delete_Row_From_Table(data, 'DATE', "T0TAL")
 
 
 def Remove_Empty_Flight_Hours(data):
@@ -44,27 +44,37 @@ def Remove_Empty_Flight_Hours(data):
     Return:
         updated data
     """
-    return Remove_Row_From_Table(data, 'FLIGHT HOURS', "0")
+    return Delete_Row_From_Table(data, 'FLIGHT HOURS', "0")
 
+def Compute_Duration_In_Minutes(hours, minutes):
+    # see if this is still needed to break down function for duration
+    pass
+    return 
 
 def Fill_In_Flight_Hours(data):
     """
-    Fillin the "FILIGHT HOURS"
+    Fillin the "FLIGHT HOURS" 
     Args:
-        data (list): List of data entries (dictionaries).
+        data (list): data entries (dictionaries).
     Returns:
         updated data with filled in flight hours
     """
-    
+    #same for fillin_block_time, total flying hours, total block time
     data_frame = pandas.DataFrame(data)
 
-    #convert from hours to minutes, replace empty cells with '0' to make sure there is no null value, cast to interger
-    data_frame['FH(HOURS)'] = data_frame['FH(HOURS)'].str.strip().replace('', '0').astype(int) 
-    #remove ':', replace empty cells with '0' to make sure there is no null value, cast to interger
-    data_frame['FH(MINUTES)'] = data_frame['FH(MINUTES)'].str.strip().str.replace(':', '').replace('', '0').astype(int)
+    #note: convert the columns to int before looping
 
-    #compute the fliying hours in minutes
-    data_frame['FLIGHT HOURS'] = (data_frame['FH(HOURS)'] * 60 + data_frame['FH(MINUTES)']).astype(str)
+    data_frame['FH(HOURS)'] = numpy.nan_to_num(data_frame['FH(HOURS)'], nan=0).astype(int) #converts float64 to int
+
+    for i in range (len(data_frame['FH(HOURS)'])):
+
+        data_frame.at[i,'FH(HOURS)'] = data_frame['FH(HOURS)'][i] * 60 #converts hours to minutes
+        data_frame.at[i,'FH(MINUTES)'] = int(data_frame['FH(MINUTES)'][i][1:]) #converts the string to in after removing ':'
+        data_frame.at[i,'FLIGHT HOURS'] = data_frame.at[i,'FH(HOURS)'] + data_frame.at[i,'FH(MINUTES)']#compute for Flight Hours
+    
+    data_frame['FLIGHT HOURS'] = data_frame['FLIGHT HOURS'].astype(int) #converts float64 to int
+    
+    print(f"{data_frame['FH(HOURS)']}")
 
     updated_data = data_frame.to_dict(orient='records')
 
