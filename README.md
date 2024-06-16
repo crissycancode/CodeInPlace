@@ -3,9 +3,8 @@
 This project ... [purpose of the project]
 
 - Journey Log
-- Airworthiness Directives
-- Hard Time (Fixed Intervals, Regulatory Compliance, Preventive Maintenance, Scheduled Maintenance)
 - Logbook (Airframe, Engine(Right Hand), Engine (Left Hand))
+- Airworthiness Directives
 
 - File Handler
 - Main
@@ -28,5 +27,31 @@ This project ... [purpose of the project]
         - __Tot Blk (Total Block Time):__ Cumulative total of all block time the aircraft has logged over multiple flights.<br>
         - __Tot C (Total Cycles):__ Cumulative total number of flight cycles the aircraft has completed.<br>
 
-2. ### **Airworthiness Directives**<br>
+2. ### **Logbook**<br>
+    __Totals Brought Forward:__<br>
+        - Usually has zero as initial entry in the logbook entry after the aircraft is manufactured or after a complete overhaul, unless the aircraft has accrued hours before the logbook was started.<br>
+        - If the logbook is new but the aircraft has previous operational history the totals brought forward will come from the last entries of the old logbook.<br>
+        - These totals are carried over from previous logbook pages or sections to maintain a continuous and cumulative record.<br>
+            - __CSN (Cycles Since New):__ Cumulative total cycles since the engine was new, brought forward from the previous entries.<br>
+            - __CSO (Cycles Since Overhaul):__ Cumulative total cycles since the last engine overhaul, brought forward.<br>
+            - __TSN (Time Since New):__ Cumulative total flight hours since the engine was new, brought forward.<br>
+            - __TSO (Time Since Overhaul):__ Cumulative total flight hours since the last engine overhaul, brought forward.<br>
+            - __TAC (Total Accumulated Cycles):__ Cumulative total cycles for the airframe, brought forward.<br>
+            - __TAT (Total Airframe Time):__ Cumulative total flight hours for the airframe, brought forward.<br>
+        -   These cumulative totals are critical for tracking the operational life of various aircraft components and ensuring proper maintenance and regulatory compliance.<br>
+        
+    __Airframe Logbook:__<br>
+        - __DATE:__ The date of the entry<br>
+        - __CYCLES (Cycles):__ The number of complete flight cycles, which typically include one takeoff and one landing.<br>
+        - __TAC (Total Accumulated Cycles):__ The cumulative number of flight cycles the aircraft has completed.<br>
+        - __FLT TIME (Flight Time):__ The duration of a single flight, typically measured from takeoff to landing.<br>
+        - __TAT (Total Airframe Time):__ The total accumulated flight hours the airframe has recorded.<br>
+        - __BLOCK (Block Time):__ The time elapsed from when the aircraft first moves under its own power for the purpose of flight until it comes to rest at the end of the flight.<br>
+        - __TOT BLOCK (Total Block Time):__ The cumulative total of all block times recorded.<br>
 
+    __Engine Logbook (Left Hand and Right Hand)__
+        - __CSN (Cycles Since New)__ The total number of flight cycles the engine has accumulated since it was new.<br>
+        - __CSO (Cycles Since Overhaul)__ The total number of flight cycles the engine has accumulated since the last major overhaul.<br>
+        - __FLT TIME (Flight Time)__ The total flight hours the engine has been in operation.<br>
+        - __TSN (Time Since New)__ The total flight hours the engine has accumulated since it was new.<br>
+        - __TSO (Time Since Overhaul)__ The total flight hours the engine has accumulated since its last major overhaul.<br>
