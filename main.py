@@ -1,6 +1,22 @@
+import pandas
+from tabulate import tabulate
 from prettytable import PrettyTable
-from file_handler import  Read_File,  Remove_Column_From_Data, Convert_To_CSV, Convert_To_Json, Export_CSV_To_Desktop
-from journey_log_cleaner import Backfill_Empty_Dates, Remove_Total_Summary_Rows, Remove_Empty_Flight_Hours, Fill_In_Flight_Hours, Fill_In_Block_Time, Fill_In_Total_Flying_Hours, Fill_In_Total_Block_Time
+from file_handler import  Read_File, Convert_To_CSV, Convert_To_Json, Export_CSV_To_Desktop
+from journey_log_cleaner import (Forward_Fill_Empty_Dates, 
+                                 Remove_Total_Summary_Rows, 
+                                 Remove_Empty_Cycle, 
+                                 Fill_In_Flight_Hours, 
+                                 Fill_In_Block_Time, 
+                                 Fill_In_Total_Flying_Hours, 
+                                 Fill_In_Total_Block_Time, 
+                                 Remove_FH_Hours_Column,
+                                 Remove_FH_Minutes_Column,
+                                 Remove_BT_Hours_Column,
+                                 Remove_BT_Minutes_Column,
+                                 Remove_TFH_Hours_Column,
+                                 Remove_TFH_Minutes_Column,
+                                 Remove_TOTB_Hours_Column,
+                                 Remove_TOTB_Minutes_Column)
 
 def Airworthiness_Directives():
     input_file = 'Airworthiness_Directives.csv'
@@ -12,20 +28,20 @@ def Journey_Log():
     data = Read_File('Journey_Log.csv') #read the file
     #customizations start here
     data = Fill_In_Flight_Hours(data) #fillin the flight hours using values in FH(HOURS) and FH(MINUTES)
-    data = Remove_Empty_Flight_Hours(data) #remove blank flight hours
-    data = Backfill_Empty_Dates(data)
+    data = Remove_Empty_Cycle(data) #remove blank flight hours
+    data = Forward_Fill_Empty_Dates(data)
     data = Remove_Total_Summary_Rows(data) #remove the rows with values for computing total summary
-    data = Remove_Column_From_Data(data, "FH(HOURS)") #no longer needed after filling in the flight hours
-    data = Remove_Column_From_Data(data, "FH(MINUTES)") #no longer needed after filling in the flight hours
-    # data = Fill_In_Block_Time(data)
-    data = Remove_Column_From_Data(data, "BT(HOURS)") #no longer needed after filling in the block time
-    data = Remove_Column_From_Data(data, "BT(MINUTES)") #no longer needed after filling in the block time
-    # data = Fill_In_Total_Flying_Hours(data)
-    data = Remove_Column_From_Data(data, "TFH(HOURS)") #no longer needed after filling in the block time
-    data = Remove_Column_From_Data(data, "TFH(MINUTES)") #no longer needed after filling in the block time
-    # data = Fill_In_Total_Block_Time(data)
-    data = Remove_Column_From_Data(data, "TOTB(HOURS)") #no longer needed after filling in the block time
-    data = Remove_Column_From_Data(data, "TOTB(MINUTES)") #no longer needed after filling in the block time
+    data = Remove_FH_Hours_Column(data)#no longer needed after filling in the flight hours
+    data = Remove_FH_Minutes_Column(data) #no longer needed after filling in the flight hours
+    data = Fill_In_Block_Time(data)
+    data = Remove_BT_Hours_Column(data) #no longer needed after filling in the block time
+    data = Remove_BT_Minutes_Column(data) #no longer needed after filling in the block time
+    data = Fill_In_Total_Flying_Hours(data)
+    data = Remove_TFH_Hours_Column(data) #no longer needed after filling in the block time
+    data = Remove_TFH_Minutes_Column(data) #no longer needed after filling in the block time
+    data = Fill_In_Total_Block_Time(data)
+    data = Remove_TOTB_Hours_Column(data) #no longer needed after filling in the block time
+    data = Remove_TOTB_Minutes_Column(data) #no longer needed after filling in the block time
 
     #table starts here
     header_mapping = {
@@ -45,31 +61,21 @@ def Journey_Log():
         "TOTAL CYCLE": "Tot C"
     }
 
-    table = Create_Pretty_Table(data, header_mapping)
-    # print(table)
+    default_header = data.columns
+    new_headers = [header_mapping.get(header, header) for header in default_header]
+
+    #creates stylizes table similar to 'prettytable'
+    pretty_table = tabulate(data, headers = new_headers, tablefmt = 'github')
+    print(pretty_table) #prints the table to console
     
+
+def Foo():
     # Use these functions for file exports
     # Convert_To_CSV(data, 'Journey_Log.csv') #modified data
     # input_filename = 'Journey_Log.csv' #string for input filename
     # output_filename = 'Journey_Log.json' #string for output filename
     # Convert_To_Json(input_filename, output_filename)
     # Export_CSV_To_Desktop('Journey_Log.csv', '') #remove this later
-
-
-def Create_Pretty_Table(data, header_mapping):
-    table = PrettyTable()
-    table.max_width = 150  #adjust as needed
-    if data:
-        default_header = data[0].keys()
-        new_headers = [header_mapping.get(header, header) for header in default_header]
-        table.field_names = new_headers  #set the custom header
-
-        for row in data:
-            new_row = {header_mapping.get(key, key): value for key, value in row.items()} #updated the row using the new header
-            table.add_row(new_row.values())
-    return table
-
-def Hard_Time():
     pass
 
 def Logbook():

@@ -36,8 +36,7 @@ def Convert_To_CSV(data, csv_file_name):
 
 def Read_File(filename):
     data_frame = pandas.read_csv(filename)
-    data = data_frame.to_dict(orient='records')
-    return data
+    return data_frame
 
 
 def Export_CSV_To_Desktop(source_file, destination_folder):
@@ -45,7 +44,3 @@ def Export_CSV_To_Desktop(source_file, destination_folder):
     destination_path = os.path.join(desktop_path, destination_folder, os.path.basename(source_file))
     shutil.copy2(source_file, destination_path)
 
-def Remove_Column_From_Data(dataset, column_name):
-    for row in dataset:
-        row.pop(column_name, None)
-    return dataset
