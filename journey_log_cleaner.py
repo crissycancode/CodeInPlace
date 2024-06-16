@@ -6,40 +6,33 @@ def Delete_Row_From_Table(data, key, value): #try to move this to a different fi
 
     return data_frame
 
-def Remove_Column_From_Data(dataset, column_name):
-    # #redo this
-    # for row in dataset:
-    #     row.pop(column_name, None)
-
-    return Drop_Column(dataset, column_name)
-
 def Drop_Column(dataset, column_name):
     dataset = dataset.drop(columns=[column_name], errors = 'ignore')
     return dataset
 
 def Remove_FH_Hours_Column(data):
-    return Remove_Column_From_Data(data, 'FH(HOURS)')
+    return Drop_Column(data, 'FH(HOURS)')
 
 def Remove_FH_Minutes_Column(data):
-    return Remove_Column_From_Data(data, 'FH(MINUTES)')
+    return Drop_Column(data, 'FH(MINUTES)')
 
 def Remove_BT_Hours_Column(data):
-    return Remove_Column_From_Data(data, 'BT(HOURS)')
+    return Drop_Column(data, 'BT(HOURS)')
 
 def Remove_BT_Minutes_Column(data):
-    return Remove_Column_From_Data(data, 'BT(MINUTES)')
+    return Drop_Column(data, 'BT(MINUTES)')
 
 def Remove_TFH_Hours_Column(data):
-    return Remove_Column_From_Data(data, 'TFH(HOURS)')
+    return Drop_Column(data, 'TFH(HOURS)')
 
 def Remove_TFH_Minutes_Column(data):
-    return Remove_Column_From_Data(data, 'TFH(MINUTES)')
+    return Drop_Column(data, 'TFH(MINUTES)')
 
 def Remove_TOTB_Hours_Column(data):
-    return Remove_Column_From_Data(data, 'TOTB(HOURS)')
+    return Drop_Column(data, 'TOTB(HOURS)')
 
 def Remove_TOTB_Minutes_Column(data):
-    return Remove_Column_From_Data(data, 'TOTB(MINUTES)')
+    return Drop_Column(data, 'TOTB(MINUTES)')
 
 
 

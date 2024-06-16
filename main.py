@@ -1,6 +1,4 @@
-import pandas
 from tabulate import tabulate
-from prettytable import PrettyTable
 from file_handler import  Read_File, Convert_To_CSV, Convert_To_Json, Export_CSV_To_Desktop
 from journey_log_cleaner import (Forward_Fill_Empty_Dates, 
                                  Remove_Total_Summary_Rows, 
