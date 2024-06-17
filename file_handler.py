@@ -3,6 +3,11 @@ import csv
 import os
 import shutil
 
+def Delete_Row_From_Table(data, key, value): 
+    data_frame = pandas.DataFrame(data)
+    data_frame = data_frame[data_frame[key] != value]
+    return data_frame
+
 def Read_File(filename):
     data_frame = pandas.read_csv(filename)
     return data_frame
@@ -30,6 +35,7 @@ def Convert_To_CSV(data, csv_file_name):
     """
     if not data.empty:
             data.to_csv(csv_file_name, index = False)
+            
 
 def Export_CSV_To_Desktop(source_file, destination_folder):
     desktop_path = os.path.join(os.path.expanduser('~'), 'Desktop')
