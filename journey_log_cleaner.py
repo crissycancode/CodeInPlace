@@ -76,7 +76,9 @@ def Flight_Hours_In_Hours(data):
     data_frame['FH(HOURS)'] = hours
     data_frame['FH(MINUTES)'] = minutes
     data_frame['FLIGHT HOURS'] = flight_duration
-
+    data_frame['TFH(HOURS)'] = data_frame['FH(HOURS)'].cumsum()
+    data_frame['TFH(MINUTES)'] = data_frame['FH(MINUTES)'].cumsum()
+    data_frame['TOTAL FLYING HOURS'] = data_frame['FLIGHT HOURS'].cumsum()
     return data_frame
 
 
