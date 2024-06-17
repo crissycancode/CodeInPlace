@@ -6,15 +6,8 @@ from journey_log_cleaner import (Forward_Fill_Empty_Dates,
                                  Fill_In_Flight_Hours, 
                                  Fill_In_Block_Time, 
                                  Fill_In_Total_Flying_Hours, 
-                                 Fill_In_Total_Block_Time, 
-                                 Remove_FH_Hours_Column,
-                                 Remove_FH_Minutes_Column,
-                                 Remove_BT_Hours_Column,
-                                 Remove_BT_Minutes_Column,
-                                 Remove_TFH_Hours_Column,
-                                 Remove_TFH_Minutes_Column,
-                                 Remove_TOTB_Hours_Column,
-                                 Remove_TOTB_Minutes_Column)
+                                 Fill_In_Total_Block_Time,
+                                 Flight_Hours_In_Hours)
 
 def Airworthiness_Directives():
     input_file = 'Airworthiness_Directives.csv'
@@ -25,21 +18,14 @@ def Journey_Log():
     
     data = Read_File('Journey_Log.csv') #read the file
     #customizations start here
-    data = Fill_In_Flight_Hours(data) #fillin the flight hours using values in FH(HOURS) and FH(MINUTES)
-    data = Remove_Empty_Cycle(data) #remove blank flight hours
-    data = Forward_Fill_Empty_Dates(data)
-    data = Remove_Total_Summary_Rows(data) #remove the rows with values for computing total summary
-    data = Remove_FH_Hours_Column(data)#no longer needed after filling in the flight hours
-    data = Remove_FH_Minutes_Column(data) #no longer needed after filling in the flight hours
+    data = Remove_Total_Summary_Rows(data) #remove the rows with values for 'computing total summary'
+    data = Remove_Empty_Cycle(data) #remove nan cycles
+    data = Forward_Fill_Empty_Dates(data) #forward fill nan dates
+    # data = Fill_In_Flight_Hours(data) #start modifying this
     data = Fill_In_Block_Time(data)
-    data = Remove_BT_Hours_Column(data) #no longer needed after filling in the block time
-    data = Remove_BT_Minutes_Column(data) #no longer needed after filling in the block time
     data = Fill_In_Total_Flying_Hours(data)
-    data = Remove_TFH_Hours_Column(data) #no longer needed after filling in the block time
-    data = Remove_TFH_Minutes_Column(data) #no longer needed after filling in the block time
     data = Fill_In_Total_Block_Time(data)
-    data = Remove_TOTB_Hours_Column(data) #no longer needed after filling in the block time
-    data = Remove_TOTB_Minutes_Column(data) #no longer needed after filling in the block time
+    data = Flight_Hours_In_Hours(data)
 
     #table starts here
     header_mapping = {
@@ -52,19 +38,32 @@ def Journey_Log():
         "ON GROUND": "OG",
         "ON BLOCKS": "OnB",
         "CYCLE": "Cyc",
+        "FH(HOURS)": "FH\nHrs",
+        "FH(MINUTES)": "FH\nMins",
         "FLIGHT HOURS": "FH",
+        "BT(HOURS)": "BT\nHrs",
+        "BT(MINUTES)": "BT\nMins",
         "BLOCK TIME": "BT",
+        "TFH(HOURS)": "TFH\nHrs",	
+        "TFH(MINUTES)": "TFH\nMins",
         "TOTAL FLYING HOURS": "Tot FH",
+        "TOTB(HOURS)": "TotB\nHrs",	
+        "TOTB(MINUTES)": "TotB\nMins",
         "TOTAL BLOCK TIME": "Tot BT",
         "TOTAL CYCLE": "Tot C"
     }
+    # columns_to_hide = ["FH(HOURS)", "FH(MINUTES)","BT(HOURS)","BT(MINUTES)","TFH(HOURS)","TFH(MINUTES)","TOTB(HOURS)","TOTB(MINUTES)"]
+    # columns_to_hide = ["FLIGHT HOURS", "BLOCK TIME","TOTAL FLYING HOURS","TOTAL BLOCK TIME"]
+    # data = data.drop(columns = columns_to_hide)
 
     default_header = data.columns
     new_headers = [header_mapping.get(header, header) for header in default_header]
 
     #creates stylizes table similar to 'prettytable'
-    pretty_table = tabulate(data, headers = new_headers, tablefmt = 'github')
+    pretty_table = tabulate(data, headers = new_headers, showindex = False, tablefmt = 'pretty')
     print(pretty_table) #prints the table to console
+
+    
     
 
 def Foo():
@@ -91,7 +90,10 @@ def Right_Hand_Engine_Logbook():
 
 def Main():
     # Airworthiness_Directives()
-    Journey_Log()
+    Journey_Log() #finished
+    # Logbook()
+
+    
 
 if __name__ == "__main__":
     Main()

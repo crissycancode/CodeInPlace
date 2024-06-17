@@ -1,40 +1,10 @@
 import pandas
+from file_handler import Convert_To_CSV
 
-def Delete_Row_From_Table(data, key, value): #try to move this to a different file
+def Delete_Row_From_Table(data, key, value): 
     data_frame = pandas.DataFrame(data)
     data_frame = data_frame[data_frame[key] != value]
-
     return data_frame
-
-def Drop_Column(dataset, column_name):
-    dataset = dataset.drop(columns=[column_name], errors = 'ignore')
-    return dataset
-
-def Remove_FH_Hours_Column(data):
-    return Drop_Column(data, 'FH(HOURS)')
-
-def Remove_FH_Minutes_Column(data):
-    return Drop_Column(data, 'FH(MINUTES)')
-
-def Remove_BT_Hours_Column(data):
-    return Drop_Column(data, 'BT(HOURS)')
-
-def Remove_BT_Minutes_Column(data):
-    return Drop_Column(data, 'BT(MINUTES)')
-
-def Remove_TFH_Hours_Column(data):
-    return Drop_Column(data, 'TFH(HOURS)')
-
-def Remove_TFH_Minutes_Column(data):
-    return Drop_Column(data, 'TFH(MINUTES)')
-
-def Remove_TOTB_Hours_Column(data):
-    return Drop_Column(data, 'TOTB(HOURS)')
-
-def Remove_TOTB_Minutes_Column(data):
-    return Drop_Column(data, 'TOTB(MINUTES)')
-
-
 
 
 def Forward_Fill_Empty_Dates(data):
@@ -52,11 +22,6 @@ def Forward_Fill_Empty_Dates(data):
 
     return data_frame
 
-def Delete_Row_From_Table(data, key, value): #try to move this to a different file
-    data_frame = pandas.DataFrame(data)
-    data_frame = data_frame[data_frame[key] != value]
-    
-    return data_frame
 
 def Remove_Total_Summary_Rows(data): 
     """
@@ -79,15 +44,44 @@ def Remove_Empty_Cycle(data):
     """
     return Delete_Row_From_Table(data, 'CYCLE', 0)
 
-def Compute_Duration(data, hours_col, minutes_col, duration_col):
+def Compute_Duration(data, hours_col, minutes_col, duration_col): #this needs to be refactored
     data_frame = pandas.DataFrame(data)
     data_frame[hours_col] = data_frame[hours_col].fillna(0).astype(int) #change from numpy to fillna for consistency with pandas ecosystem
-    data_frame[hours_col] = data_frame[hours_col] * 60
+    hours_in_minutes = data_frame[hours_col] * 60
     data_frame[minutes_col] = data_frame[minutes_col].replace('', '0').replace(':', '')
     data_frame[minutes_col] = data_frame[minutes_col].str.replace(':', '').astype(int)
-    data_frame[duration_col] = data_frame[hours_col] + data_frame[minutes_col]
+    data_frame[duration_col] = hours_in_minutes + data_frame[minutes_col]
 
     return data_frame
+
+def Flight_Hours_In_Hours(data):
+    data_frame = pandas.DataFrame(data)
+
+    take_off_str  = data_frame['TAKE OFF'].astype(str)
+    take_off_date = pandas.to_datetime(take_off_str, format = '%H:%M', errors = 'coerce')
+
+    #new on ground value
+    on_ground_str  = data_frame['ON GROUND'].astype(str)
+    on_ground_date = pandas.to_datetime(on_ground_str, format = '%H:%M', errors = 'coerce')
+
+    #calculate flight duration
+    flight_duration = (on_ground_date - take_off_date).dt.total_seconds()
+    flight_duration = flight_duration.mask(flight_duration < 0, flight_duration + 24 * 3600)
+
+    #get the hours and minutes
+    hours = (flight_duration // 3600).astype(int)
+    minutes = ((flight_duration % 3600) // 60).astype(int)
+
+    #assigned values to column
+    data_frame['FH(HOURS)'] = hours
+    data_frame['FH(MINUTES)'] = minutes
+    data_frame['FLIGHT HOURS'] = flight_duration
+
+    return data_frame
+
+
+def Flight_Hours_In_Minutes(data):
+    pass
 
 def Fill_In_Flight_Hours(data):
     """

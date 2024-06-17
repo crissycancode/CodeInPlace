@@ -3,6 +3,10 @@ import csv
 import os
 import shutil
 
+def Read_File(filename):
+    data_frame = pandas.read_csv(filename)
+    return data_frame
+
 def Convert_To_Json(csv_file, json_file_name): 
     """
     Converts files with csv extension to a json [dictionary]
@@ -22,22 +26,10 @@ def Convert_To_Json(csv_file, json_file_name):
 
 def Convert_To_CSV(data, csv_file_name):
     """
-    Converts files with json extension to csv
-    Args:
-        data (Dictionary): data to use
-        csv_file_name (String): file name to use for saving data
+    save file to csv format
     """
-    header = data[0].keys() if data else []
-    with open(csv_file_name, 'w', newline='') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames = header)
-        writer.writeheader()
-        writer.writerows(data)
-    
-
-def Read_File(filename):
-    data_frame = pandas.read_csv(filename)
-    return data_frame
-
+    if not data.empty:
+            data.to_csv(csv_file_name, index = False)
 
 def Export_CSV_To_Desktop(source_file, destination_folder):
     desktop_path = os.path.join(os.path.expanduser('~'), 'Desktop')
