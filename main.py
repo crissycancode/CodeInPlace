@@ -3,10 +3,7 @@ from file_handler import  Read_File, Convert_To_CSV, Convert_To_Json, Export_CSV
 from journey_log_cleaner import (Forward_Fill_Empty_Dates, 
                                  Remove_Total_Summary_Rows, 
                                  Remove_Empty_Cycle, 
-                                 Fill_In_Flight_Hours, 
-                                 Fill_In_Block_Time, 
-                                 Fill_In_Total_Flying_Hours, 
-                                 Fill_In_Total_Block_Time,
+                                 Block_Values,
                                  Flight_Hours_In_Hours)
 
 def Airworthiness_Directives():
@@ -22,9 +19,10 @@ def Journey_Log():
     data = Remove_Empty_Cycle(data) #remove nan cycles
     data = Forward_Fill_Empty_Dates(data) #forward fill nan dates
     # data = Fill_In_Flight_Hours(data) #start modifying this
-    data = Fill_In_Block_Time(data)
-    data = Fill_In_Total_Flying_Hours(data)
-    data = Fill_In_Total_Block_Time(data)
+    # data = Fill_In_Block_Time(data)
+    # data = Fill_In_Total_Flying_Hours(data)
+    # data = Fill_In_Total_Block_Time(data)
+    data = Block_Values(data)
     data = Flight_Hours_In_Hours(data)
 
     #table starts here

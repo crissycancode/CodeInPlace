@@ -10,11 +10,6 @@ def Delete_Row_From_Table(data, key, value):
 def Forward_Fill_Empty_Dates(data):
     """
     Fill in missing date in 'DATE' with last observed value(date).
-    Args:
-        data(list):  List of data entries
-    Returns: 
-        data(list): Data entries with empty 'DATE' fields filled.
-
     """
     data_frame = pandas.DataFrame(data)
     data_frame['DATE'] = data_frame['DATE'].replace('', pandas.NA)
@@ -26,10 +21,6 @@ def Forward_Fill_Empty_Dates(data):
 def Remove_Total_Summary_Rows(data): 
     """
     Removes rows with that contains "T0TAL -- wala -- total for the day"
-    Args:
-        data(list): List of data entries
-    Returns:
-        updated data
     """
     return Delete_Row_From_Table(data, 'DATE', "T0TAL")
 
@@ -37,22 +28,8 @@ def Remove_Total_Summary_Rows(data):
 def Remove_Empty_Cycle(data):
     """
     Remove rows with CYCLE = 0.
-    Args:
-        data(list): List of data entries
-    Return:
-        updated data
     """
     return Delete_Row_From_Table(data, 'CYCLE', 0)
-
-def Compute_Duration(data, hours_col, minutes_col, duration_col): #this needs to be refactored
-    data_frame = pandas.DataFrame(data)
-    data_frame[hours_col] = data_frame[hours_col].fillna(0).astype(int) #change from numpy to fillna for consistency with pandas ecosystem
-    hours_in_minutes = data_frame[hours_col] * 60
-    data_frame[minutes_col] = data_frame[minutes_col].replace('', '0').replace(':', '')
-    data_frame[minutes_col] = data_frame[minutes_col].str.replace(':', '').astype(int)
-    data_frame[duration_col] = hours_in_minutes + data_frame[minutes_col]
-
-    return data_frame
 
 def Flight_Hours_In_Hours(data):
     data_frame = pandas.DataFrame(data)
@@ -72,7 +49,7 @@ def Flight_Hours_In_Hours(data):
     hours = (flight_duration // 3600).astype(int)
     minutes = ((flight_duration % 3600) // 60).astype(int)
 
-    #assigned values to column
+    #assigned values to columns
     data_frame['FH(HOURS)'] = hours
     data_frame['FH(MINUTES)'] = minutes
     data_frame['FLIGHT HOURS'] = flight_duration
@@ -86,43 +63,61 @@ def Flight_Hours_In_Minutes(data):
     pass
 
 def Fill_In_Flight_Hours(data):
-    """
-    Fillin the "FLIGHT HOURS" 
-    Args:
-        data (list): data entries (dictionaries).
-    Returns:
-        updated data with filled in flight hours
-    """
-    return Compute_Duration(data, 'FH(HOURS)', 'FH(MINUTES)', 'FLIGHT HOURS')
+    pass
     
+def Fill_In_Total_Flying_Hours(data):
+    pass
 
 def Fill_In_Block_Time(data):
     """
     Fillin the "BLOCK TIME"
-    Args:
-        data (list): List of data entries (dictionaries).
-    Returns:
-        list: Data entries with standardized 'BLOCK TIME' values.
     """
-    return Compute_Duration(data, 'BT(HOURS)', 'BT(MINUTES)', 'BLOCK TIME')
+    pass
 
-def Fill_In_Total_Flying_Hours(data):
-    """
-    Fillin the "TOTAL FLYING TIME"
-    Args:
-        data (list): List of data entries (dictionaries).
-    Returns:
-        list: Data entries with standardized 'TOTAL FLYING TIME' values.
-    """
-    return Compute_Duration(data, 'TFH(HOURS)', 'TFH(MINUTES)', 'TOTAL FLYING HOURS')
+
 
 
 def Fill_In_Total_Block_Time(data):
     """
     Fillin the "TOTAL BLOCK TIME"
-    Args:
-        data (list): List of data entries (dictionaries).
-    Returns:
-        list: Data entries with standardized 'TOTAL BLOCK TIME' values.
     """
-    return Compute_Duration(data, 'TOTB(HOURS)', 'TOTB(MINUTES)', 'TOTAL BLOCK TIME')
+    pass
+
+
+
+def Block_Values(data):
+    data_frame = pandas.DataFrame(data)
+    # on blocks - off blocks
+
+    off_blocks_str  = data_frame['OFF BLOCKS'].astype(str)
+    off_blocks_date = pandas.to_datetime(off_blocks_str, format = '%H:%M', errors = 'coerce')
+
+    #new on ground value
+    on_blocks_str  = data_frame['ON BLOCKS'].astype(str)
+    on_blocks_date = pandas.to_datetime(on_blocks_str, format = '%H:%M', errors = 'coerce')
+
+    #calculate flight duration
+    block_time_duration = (on_blocks_date - off_blocks_date).dt.total_seconds()
+    block_time_duration = block_time_duration.mask(block_time_duration < 0, block_time_duration + 24 * 3600)
+
+    block_time_duration_filled = block_time_duration.fillna(0)
+
+    #get the hours and minutes
+    hours = (block_time_duration_filled // 3600).astype(int)
+    minutes = ((block_time_duration_filled % 3600) // 60).astype(int)
+
+    #assigned values to columns
+    data_frame['BT(HOURS)'] = hours
+    data_frame['BT(MINUTES)'] = minutes
+    data_frame['BLOCK TIME'] = block_time_duration
+    data_frame['TOTB(HOURS)'] = data_frame['BT(HOURS)'].cumsum()
+    data_frame['TOTB(MINUTES)'] = data_frame['BT(MINUTES)'].cumsum()
+    data_frame['TOTAL BLOCK TIME'] = data_frame['BLOCK TIME'].cumsum()
+
+    return data_frame
+
+def Total_Cycle(data):
+    data_frame = pandas.DataFrame(data)
+    data_frame['TOTAL CYCLE'] = data_frame['CYCLE'].cumsum()
+
+    return data_frame
