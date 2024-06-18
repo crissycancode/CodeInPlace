@@ -1,73 +1,42 @@
 import pandas
 from file_handler import Delete_Row_From_Table
+from time_utils import (Forward_Fill_Empty_Dates,
+                        Convert_To_Datetime,
+                        Compute_Duration,
+                        Get_Hours_From_Duration,
+                        Get_Minutes_From_Duration)
 
 
 def Remove_Total_Summary_Rows(data): 
     """
     Removes rows with that contains "T0TAL -- wala -- total for the day"
+    Args:
+        data : flight data that represents flight log entry.
+    Return:
+        data frame without the deleted row
     """
     return Delete_Row_From_Table(data, 'DATE', "T0TAL")
 
 
 def Remove_Empty_Cycle(data):
     """
-    Remove rows with CYCLE = 0.
+    Removes rows cycles that have 0 value
+    Args:
+        data : flight data that represents flight log entry.
+    Return:
+        data frame without the deleted row
     """
     return Delete_Row_From_Table(data, 'CYCLE', 0)
 
-def Forward_Fill_Empty_Dates(data):
+def Update_Empty_Flight_Dates(data):
     """
-    Fill in missing date in 'DATE' with last observed value(date).
-    """
-    data_frame = pandas.DataFrame(data)
-    data_frame['DATE'] = data_frame['DATE'].replace('', pandas.NA)
-    data_frame['DATE'] = data_frame['DATE'].ffill()
-
-    return data_frame
-
-def Convert_To_Datetime(time_stamp):
-    """
-    Converts time in string to datetime object.
+    Fill in missing date with last observed value(date).
     Args:
-        time_stamp(object): time stamp in `HH:MM`
+        data : flight data that represents flight log entry.
     Return:
-        date time (object) conversion of time stamp
+        data frame with updated dates
     """
-    time_stamp.astype(str)
-    return pandas.to_datetime(time_stamp, format = '%H:%M', errors = 'coerce')
-
-def Compute_Duration(start_time, end_time):
-    """
-    Calculate the duration in seconds between two datetime objects
-    Args:
-        start_time: date time object to subtract
-        end_time: date time onject to subtract from
-    """
-    block_time_duration = (end_time - start_time).dt.total_seconds()
-    block_time_duration = block_time_duration.mask(block_time_duration < 0, block_time_duration + 24 * 3600) #accounts for values of the next day (00:00)
-
-    return block_time_duration.fillna(0).astype(int) #returns 0 when value is nan
-
-def Get_Hours_From_Duration(duration):
-    """
-    Get the hours component from a duration
-    Args:
-        duration: durations in seconds
-    Return:
-        hours in integers
-    """
-    return (duration // 3600).astype(int)
-
-
-def Get_Minutes_From_Duration(duration):
-    """
-    Get the minutes component from a duration
-    Args:
-        duration: durations in seconds
-    Return:
-        minutes in integers
-    """
-    return ((duration % 3600) // 60).astype(int)
+    return Forward_Fill_Empty_Dates(data,'DATE')
 
 
 def Update_Flight_Hours(data):

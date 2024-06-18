@@ -1,6 +1,6 @@
 from tabulate import tabulate
 from file_handler import  Read_File, Convert_To_CSV, Convert_To_Json, Export_CSV_To_Desktop
-from journey_log_cleaner import (Forward_Fill_Empty_Dates, 
+from journey_log_cleaner import (Update_Empty_Flight_Dates, 
                                  Remove_Total_Summary_Rows, 
                                  Remove_Empty_Cycle, 
                                  Update_Flight_Hours,
@@ -18,7 +18,7 @@ def Journey_Log():
     #customizations start here
     data = Remove_Total_Summary_Rows(data) #remove the rows with values for 'computing total summary'
     data = Remove_Empty_Cycle(data) #remove nan cycles
-    data = Forward_Fill_Empty_Dates(data) #forward fill nan dates
+    data = Update_Empty_Flight_Dates(data) #forward fill nan dates
     data = Update_Block_Time(data)
     data = Update_Flight_Hours(data)
     data = Update_Total_Cycle(data)
