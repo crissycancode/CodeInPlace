@@ -4,15 +4,27 @@ def Forward_Fill_Empty_Dates(data, key):
     """
     Fill in missing date with last observed value(date).
     Args:
-        data : flight data that represents flight log entry.
+        data : data that represents table entry.
+        key : the column name which contains the dates.
     Return:
         data frame with updated dates
     """
     data_frame = pandas.DataFrame(data)
     data_frame[key] = data_frame[key].replace('', pandas.NA)
+    data_frame[key] = Format_Date(data_frame[key])
     data_frame[key] = data_frame[key].ffill()
 
     return data_frame
+
+def Format_Date(date):
+    """
+    Format the date series to replace spaces and periods with hyphens.
+    Args:
+        date: dates as string
+    Return:
+        formatted dates
+    """
+    return date.str.replace(' ', '-', regex = False).str.replace('.', '-', regex = False)
 
 def Convert_To_Datetime(time_stamp):
     """

@@ -133,3 +133,33 @@ def Update_Total_Cycle(data):
     data_frame['TOTAL CYCLE'] = data_frame['CYCLE'].cumsum()
 
     return data_frame
+
+def Journey_Log_Headers():
+    """
+    Heads to display
+    return: dictionary of custom headers
+    """
+    return {
+        "DATE": "Date",
+        "OPERATION": "Op",
+        "SECTOR FROM": "From",
+        "SECTOR TO": "To",
+        "OFF BLOCKS": "OffB",
+        "TAKE OFF": "TO",
+        "ON GROUND": "OG",
+        "ON BLOCKS": "OnB",
+        "CYCLE": "Cyc",
+        "FH(HOURS)": "FH\nHrs",
+        "FH(MINUTES)": "FH\nMins",
+        "FLIGHT HOURS": "FH",
+        "BT(HOURS)": "BT\nHrs",
+        "BT(MINUTES)": "BT\nMins",
+        "BLOCK TIME": "BT",
+        "TFH(HOURS)": "TFH\nHrs",	
+        "TFH(MINUTES)": "TFH\nMins",
+        "TOTAL FLYING HOURS": "Tot FH",
+        "TOTB(HOURS)": "TotB\nHrs",	
+        "TOTB(MINUTES)": "TotB\nMins",
+        "TOTAL BLOCK TIME": "Tot BT",
+        "TOTAL CYCLE": "Tot C"
+    }
