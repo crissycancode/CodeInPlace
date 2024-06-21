@@ -1,4 +1,5 @@
 import pandas
+import logging
 
 def Forward_Fill_Empty_Dates(data, key):
     """
@@ -26,16 +27,38 @@ def Format_Date(date):
     """
     return date.str.replace(' ', '-', regex = False).str.replace('.', '-', regex = False)
 
-def Convert_To_Datetime(time_stamp):
+def Convert_To_Datetime_In_Hrs_Mins(time_stamp):
     """
-    Converts time in string to datetime object.s
+    Converts time in string to datetime object
     Args:
         time_stamp(object): time stamp in `HH:MM`
     Return:
         date time (object) conversion of time stamp
     """
-    time_stamp.astype(str)
-    return pandas.to_datetime(time_stamp, format = '%H:%M', errors = 'coerce')
+    # if not isinstance(time_stamp, str):
+    #     time_stamp = time_stamp.astype(str)
+    # return pandas.to_datetime(time_stamp, format = '%H:%M', errors = 'coerce')
+
+    try:
+        return pandas.to_datetime(time_stamp, format = '%H:%M', errors='coerce')
+    except Exception as e:
+        logging.error(f"Error parsing datetime: {e}")
+        return pandas.NaT  # Return NaT for failed parses
+
+def Convert_To_Datetime(time_stamp):
+    """
+    Converts time in string to datetime object
+    Args:
+        time_stamp(object): time stamp in `HH:MM`
+    Return:
+        date time (object) conversion of time stamp
+    """
+    try:
+        return pandas.to_datetime(time_stamp, format = '%d-%b-%y', errors='coerce')
+    except Exception as e:
+        logging.error(f"Error parsing datetime: {e}")
+        return pandas.NaT  # Return NaT for failed parses
+
 
 def Compute_Duration(start_time, end_time):
     """

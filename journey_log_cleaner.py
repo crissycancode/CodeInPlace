@@ -1,7 +1,7 @@
 import pandas
 from file_handler import Delete_Row_From_Table
 from time_utils import (Forward_Fill_Empty_Dates,
-                        Convert_To_Datetime,
+                        Convert_To_Datetime_In_Hrs_Mins,
                         Compute_Duration,
                         Get_Hours_From_Duration,
                         Get_Minutes_From_Duration)
@@ -61,8 +61,8 @@ def Update_Flight_Hours(data):
     """
         
     data_frame = pandas.DataFrame(data)
-    take_off = Convert_To_Datetime(data_frame['TAKE OFF'])
-    on_ground = Convert_To_Datetime(data_frame['ON GROUND'])
+    take_off = Convert_To_Datetime_In_Hrs_Mins(data_frame['TAKE OFF'])
+    on_ground = Convert_To_Datetime_In_Hrs_Mins(data_frame['ON GROUND'])
 
     duration = Compute_Duration(take_off, on_ground)
 
@@ -102,8 +102,8 @@ def Update_Block_Time(data):
     """
     data_frame = pandas.DataFrame(data)
  
-    off_blocks = Convert_To_Datetime(data_frame['OFF BLOCKS'])
-    on_blocks = Convert_To_Datetime(data_frame['ON BLOCKS'])
+    off_blocks = Convert_To_Datetime_In_Hrs_Mins(data_frame['OFF BLOCKS'])
+    on_blocks = Convert_To_Datetime_In_Hrs_Mins(data_frame['ON BLOCKS'])
 
     duration = Compute_Duration(off_blocks, on_blocks)
 

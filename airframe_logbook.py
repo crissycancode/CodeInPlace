@@ -3,6 +3,7 @@ The data in airframe logbook, will come from journey log and flights brough forw
 """
 
 import pandas
+from time_utils import (Convert_To_Datetime)
 
 
 def Airframe_Logbook_Headers():
@@ -12,7 +13,7 @@ def Airframe_Logbook_Headers():
     """
     return {
         'DATE': 'Date', #journey log
-        'CYCLES': 'Cyc', #journey log
+        'CYCLE': 'Cyc', #journey log
         'TAC': 'TAC',	#totals broght forward 
         'FLT TIME Hrs': 'FH\nHrs', #journey log
         'FLT TIME Hrs': 'FH\nMins', #journey log
@@ -31,40 +32,38 @@ def Airframe_Logbook_Headers():
 #'TAC AF' 'TAT AF Hrs' 'TAT AF Mins' 'TAT AF Dur' (totals brought forward)
 # get computations for each values in header mapping
 
+def Validate_Columns(columns,data_frame, file_name): #will posible be used to the other logs
+    """
+    Check if the colum exist in the data frame
+    Args:
+        columns: string array of column headers
+        data_frame: data
+        file_name[string]: data from title
+    Return:
+        Boolean value
+    """
+    for column in columns:
+        if column not in data_frame.columns:
+            raise ValueError(f"Column '{column}' not found in {file_name} DataFrame.")
+    
 def Update_Airframe_Log_Dates(journey_log, airframe_log):
-    #check in journey log
-    if 'DATE' not in journey_log.columns:
-        raise ValueError("Column 'DATE' not found in journey_log DataFrame.")
-    if 'CYCLE' not in journey_log.columns:
-        raise ValueError("Column 'CYCLE' not found in journey_log DataFrame.")
-    
-    # check in airframe log
-    if 'DATE' not in airframe_log.columns:
-        raise ValueError("Column 'DATE' not found in airframe_log DataFrame.")
-    
-    # update airframe_log with columns from journey_log
-    airframe_log = journey_log[['DATE']]
-    airframe_log['CYCLES'] = journey_log['CYCLE']
-    
-    
-    # initialize other columns to empty strings
-    columns_to_initialize = [
-        'TAC', 'FLT TIME Hrs', 'FLT TIME Mins', 'FLT TIME Dur', 
-        'TAT Hrs', 'TAT Mins', 'TAT Dur', 'BLOCK Hrs', 'BLOCK Mins', 
-        'BLOCK Dur', 'TOT BLOCK hrs', 'TOT BLOCK Mins', 'TOT BLOCK Dur'
-    ]
+    #check column in journey log
+    journey_log_columns = ['DATE', 'CYCLE']
+    Validate_Columns(journey_log_columns, journey_log, 'journey_log')
 
-    for col in columns_to_initialize:
-        airframe_log[col] = ''
+    airframe_log_columns = ['DATE', 'CYCLE']
+    Validate_Columns(airframe_log_columns, airframe_log, 'airframe_log')
     
-    # convert 'DATE' to datetime
-    airframe_log['DATE'] = pandas.to_datetime(airframe_log['DATE'], errors='coerce')
+    # update airframe_log (date, cycle) with values from journey_log
+    airframe_log = journey_log[['DATE']].copy()
+    airframe_log.loc[:, 'DATE'] = Convert_To_Datetime(airframe_log['DATE'])
+    airframe_log.loc[:, 'CYCLE'] = journey_log['CYCLE']
 
-    # group by 'DATE' and sum 'CYCLES'
-    aggregated_data = airframe_log.groupby('DATE').agg({'CYCLES': 'sum'}).reset_index()
-
-    # sort by 'DATE' and format it back to the desired format
+    # group by 'DATE', then sum 'CYCLE' by date
+    aggregated_data = airframe_log.groupby('DATE').agg({'CYCLE': 'sum'}).reset_index()
+    # sort by 'DATE'
     aggregated_data = aggregated_data.sort_values(by='DATE')
+    # format to day-month-year
     aggregated_data['DATE'] = aggregated_data['DATE'].dt.strftime('%d-%b-%y')
 
     return aggregated_data
@@ -74,7 +73,9 @@ def Get_Cycles(data):
     pass
 
 def Get_Total_Accumulated_Cycle():
-    #total_accumulated_cycle = total_accumulated_cycle + current_cycles
+    #(TAC) for an aircraft or engine refers to the cumulative count of flight cycles since the component was first put into service.
+    #This means 'Flight Brought Forward' is now needed along with Journey Log
+    #Total_accumulated_cycle = total_accumulated_cycle + current_cycles
     pass
 
 def Get_Total_Airframe_Time(): #(Duration)
