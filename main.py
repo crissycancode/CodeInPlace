@@ -7,7 +7,15 @@ from journey_log_cleaner import (Update_Empty_Flight_Dates,
                                  Update_Block_Time,
                                  Update_Total_Cycle,
                                  Journey_Log_Headers)
-from airframe_logbook import (Update_Airframe_Log_Dates, Airframe_Logbook_Headers)
+from airframe_logbook import (Copy_Date_From_JourneyLog,
+                              Copy_Cycles_From_JourneyLog, 
+                              Airframe_Logbook_Headers,
+                              Get_Total_Accumulated_Cycle,
+                              Aggregate_Data,
+                              Get_Total_Airframe_Time,
+                              Get_Flight_Time,
+                              Get_Block_Time,
+                              Get_Total_Block_Time)
 
 
 def Airworthiness_Directives():
@@ -17,7 +25,7 @@ def Airworthiness_Directives():
 
 
 def Journey_Log():
-    
+    print(f"Journey Log")
     data = Read_File('Journey_Log.csv') #assign csv to data
     data = Remove_Total_Summary_Rows(data) #remove the rows with values for 'computing total summary'
     data = Remove_Empty_Cycle(data) #remove nan cycles
@@ -32,11 +40,23 @@ def Journey_Log():
 
 
 def Airframe_Logbook():
+    print(f"Airframe Log")
     journey_log = Read_File('updated_journey_log.csv')
     airframe_log = Read_File('airframe_log.csv')
-    data = Update_Airframe_Log_Dates(journey_log, airframe_log)
+    totals_brought_forward = Read_File('flights_brought_forward.csv')
+
+    airframe_data = Copy_Date_From_JourneyLog(journey_log, airframe_log)
+    airframe_data = Copy_Cycles_From_JourneyLog(journey_log, airframe_data) #use 'airframe_data' dataframe 
+    airframe_data = Get_Total_Accumulated_Cycle(airframe_data, totals_brought_forward)
+    airframe_data = Get_Total_Airframe_Time(journey_log, airframe_data, totals_brought_forward)
+    airframe_data = Get_Flight_Time(journey_log, airframe_data)
+    airframe_data = Get_Block_Time(journey_log, airframe_data)
+    airframe_data = Get_Total_Block_Time(journey_log, airframe_data)
+
+    airframe_data = Aggregate_Data(airframe_data) #do this last, since it is sorting
     header_map  = Airframe_Logbook_Headers()
-    # Print_Data_To_Console(data, header_map)
+    
+    Print_Data_To_Console(airframe_data, header_map)
 
 
 def Left_Hand_Engine_Logbook():
