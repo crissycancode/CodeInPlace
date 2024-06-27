@@ -7,15 +7,23 @@ from journey_log_cleaner import (Update_Empty_Flight_Dates,
                                  Update_Block_Time,
                                  Update_Total_Cycle,
                                  Journey_Log_Headers)
-from airframe_logbook import (Copy_Date_From_JourneyLog,
-                              Copy_Cycles_From_JourneyLog, 
-                              Airframe_Logbook_Headers,
-                              Get_Total_Accumulated_Cycle,
+from airframe_logbook import (Airframe_Logbook_Headers,
                               Aggregate_Data,
-                              Get_Total_Airframe_Time,
-                              Get_Flight_Time,
-                              Get_Block_Time,
-                              Get_Total_Block_Time)
+                              Create_Airframe_Log,
+                              Reference_Cycles_From_Journey_Log,
+                              Add_Total_Accumulated_Cycle,
+                              Add_Flying_Time_In_Hours,
+                              Add_Flying_Time_In_Minutes,
+                              Add_Flying_Time_Duration,
+                              Add_Total_Airframe_Time,
+                              Add_Total_Airframe_Time_In_Hours,
+                              Add_Total_Airframe_Time_In_Minutes,
+                              Add_Block_Time,
+                              Add_Block_Time_In_Hours,
+                              Add_Block_Time_In_Minutes,
+                              Add_Total_Block_Time,
+                              Add_Total_Block_Time_In_Hours,
+                              Add_Total_Block_Time_In_Minutes)
 
 
 def Airworthiness_Directives():
@@ -42,16 +50,23 @@ def Journey_Log():
 def Airframe_Logbook():
     print(f"Airframe Log")
     journey_log = Read_File('updated_journey_log.csv')
-    airframe_log = Read_File('airframe_log.csv')
     totals_brought_forward = Read_File('flights_brought_forward.csv')
 
-    airframe_data = Copy_Date_From_JourneyLog(journey_log, airframe_log)
-    airframe_data = Copy_Cycles_From_JourneyLog(journey_log, airframe_data) #use 'airframe_data' dataframe 
-    airframe_data = Get_Total_Accumulated_Cycle(airframe_data, totals_brought_forward)
-    airframe_data = Get_Total_Airframe_Time(journey_log, airframe_data, totals_brought_forward)
-    airframe_data = Get_Flight_Time(journey_log, airframe_data)
-    airframe_data = Get_Block_Time(journey_log, airframe_data)
-    airframe_data = Get_Total_Block_Time(journey_log, airframe_data)
+    airframe_data = Create_Airframe_Log(journey_log)
+    airframe_data = Reference_Cycles_From_Journey_Log(journey_log, airframe_data)
+    airframe_data = Add_Total_Accumulated_Cycle(totals_brought_forward, airframe_data)
+    airframe_data = Add_Flying_Time_In_Hours(journey_log, airframe_data)
+    airframe_data = Add_Flying_Time_In_Minutes(journey_log, airframe_data)
+    airframe_data = Add_Flying_Time_Duration(journey_log, airframe_data)
+    airframe_data = Add_Total_Airframe_Time(journey_log, totals_brought_forward, airframe_data)
+    airframe_data = Add_Total_Airframe_Time_In_Hours(journey_log, totals_brought_forward, airframe_data)
+    airframe_data = Add_Total_Airframe_Time_In_Minutes(journey_log, totals_brought_forward, airframe_data)
+    airframe_data = Add_Block_Time(journey_log, airframe_data)
+    airframe_data = Add_Block_Time_In_Hours(journey_log, airframe_data)
+    airframe_data = Add_Block_Time_In_Minutes(journey_log, airframe_data)
+    airframe_data = Add_Total_Block_Time(journey_log, airframe_data)
+    airframe_data = Add_Total_Block_Time_In_Hours(journey_log, airframe_data)
+    airframe_data = Add_Total_Block_Time_In_Minutes(journey_log, airframe_data)
 
     airframe_data = Aggregate_Data(airframe_data) #do this last, since it is sorting
     header_map  = Airframe_Logbook_Headers()

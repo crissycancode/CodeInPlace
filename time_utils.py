@@ -35,10 +35,6 @@ def Convert_To_Datetime_In_Hrs_Mins(time_stamp):
     Return:
         date time (object) conversion of time stamp
     """
-    # if not isinstance(time_stamp, str):
-    #     time_stamp = time_stamp.astype(str)
-    # return pandas.to_datetime(time_stamp, format = '%H:%M', errors = 'coerce')
-
     try:
         return pandas.to_datetime(time_stamp, format = '%H:%M', errors='coerce')
     except Exception as e:

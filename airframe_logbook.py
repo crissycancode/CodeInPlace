@@ -1,4 +1,5 @@
 from time_utils import (Convert_To_Datetime)
+import pandas
 
 #'TAC AF' 'TAT AF Hrs' 'TAT AF Mins' 'TAT AF Dur' (totals brought forward)
 # get computations for each values in header mapping
@@ -23,9 +24,17 @@ def Aggregate_Data(airframe_log):
     aggregated_data = airframe_log.groupby('DATE').agg({
         'CYCLE': 'sum', #sum the 'CYCLE'
         'TAC': 'last',#retain the first 'TAC' value
-        'TAT': 'last',
+        'FLT TIME Hrs': 'last',
+        'FLT TIME Mins': 'last',
         'FLT TIME Dur': 'last',
+        'TAT Hrs': 'last',
+        'TAT Mins': 'last',
+        'TAT Dur': 'last',
+        'BLOCK Hrs': 'last',
+        'BLOCK Mins': 'last',
         'BLOCK Dur': 'last',
+        'TOT BLOCK Hrs': 'last',
+        'TOT BLOCK Mins': 'last',
         'TOT BLOCK Dur': 'last'
     }).reset_index()
 
@@ -36,58 +45,83 @@ def Aggregate_Data(airframe_log):
 
     return aggregated_data
 
-
-def Copy_Date_From_JourneyLog(journey_log, airframe_log): #step 1 copy date from JL
-    journey_log_columns = ['DATE']
-    Validate_Columns(journey_log_columns, journey_log, 'journey_log')
-    airframe_log_columns = ['DATE']
-    Validate_Columns(airframe_log_columns, airframe_log, 'airframe_log')
-
-    airframe_log = journey_log[['DATE']].copy()
-    airframe_log.loc[:, 'DATE'] = airframe_log['DATE']
-
+def Create_Airframe_Log(journey_log):
+    airframe_log = journey_log.loc[:, ['DATE']]
     return airframe_log
 
+def Reference_Cycles_From_Journey_Log(journey_log, airframe_data):
+    airframe_data.loc[:, 'CYCLE'] = journey_log['CYCLE']
+    return airframe_data
 
-def Copy_Cycles_From_JourneyLog(journey_log, airframe_log):
-    airframe_log.loc[:, 'CYCLE'] = journey_log['CYCLE']
-    return airframe_log
-
-
-def Get_Total_Accumulated_Cycle(airframe_log, totals_brought_forward):
+def Add_Total_Accumulated_Cycle(totals_brought_forward, airframe_data):
     #(TAC) for an aircraft or engine refers to the cumulative count of flight cycles since the component was first put into service.
     #This means 'Flight Brought Forward' is now needed along with Journey Log
     #Total_accumulated_cycle = total_accumulated_cycle + current_cycles
     tac = totals_brought_forward['TAC AF'][0]
-    cycle = airframe_log['CYCLE'].cumsum()
-    airframe_log['TAC'] = tac + cycle
-    return airframe_log
+    cycle = airframe_data['CYCLE'].cumsum()
+    airframe_data['TAC'] = tac + cycle
+    return airframe_data
 
+def Add_Flying_Time_In_Hours(journey_log, airframe_data):
+    airframe_data.loc[:,'FLT TIME Hrs'] = journey_log['FH(HOURS)']
+    return airframe_data
 
-def Get_Total_Airframe_Time(journey_log, airframe_log, totals_brought_forward): #(Duration)
+def Add_Flying_Time_In_Minutes(journey_log, airframe_data):
+    airframe_data.loc[:,'FLT TIME Mins'] = journey_log['FH(MINUTES)']
+    return airframe_data
 
+def Add_Flying_Time_Duration(journey_log, airframe_data):
+    # 'FLT TIME Dur': 'FH', #journey log
+    airframe_data.loc[:,'FLT TIME Dur'] = journey_log['FLIGHT HOURS']
+    return airframe_data
+
+def Add_Total_Airframe_Time(journey_log, totals_brought_forward, airframe_data):
     tat_hours = totals_brought_forward['TAT AF Hrs'][0] * 60
     tat_minutes = totals_brought_forward['TAT AF Mins'][0]
     tat  = tat_hours + tat_minutes
     flight_hours = journey_log['FLIGHT HOURS'].cumsum()
 
-    airframe_log['TAT'] = tat + flight_hours
-    airframe_log['TAT'] = airframe_log['TAT'].astype(int)
-    return airframe_log
+    tat = tat + flight_hours
+    airframe_data.loc[:,'TAT Dur'] = tat.astype(int)
+    return airframe_data # in minutes
 
-def Get_Flight_Time(journey_log, airframe_log):#(Duration)
-    #Flight Time is same as Flight Hours (FH) in Journey Log
-    airframe_log['FLT TIME Dur'] = journey_log['FLIGHT HOURS']
-    return airframe_log
+def Add_Total_Airframe_Time_In_Hours(journey_log, totals_brought_forward, airframe_data):
+    tat_hours = totals_brought_forward['TAT AF Hrs'][0]
+    flight_hours = journey_log['FH(HOURS)'].cumsum()
+    tat_hours = tat_hours + flight_hours
+    airframe_data.loc[:,'TAT Hrs'] = tat_hours.astype(int)
+    return airframe_data
 
-def Get_Block_Time(journey_log, airframe_log):#(Duration)
-    airframe_log['BLOCK Dur'] = journey_log['BLOCK TIME']
-    return airframe_log
+def Add_Total_Airframe_Time_In_Minutes(journey_log, totals_brought_forward, airframe_data):
+    tat_mins = totals_brought_forward['TAT AF Mins'][0]
+    flight_mins = journey_log['FH(MINUTES)'].cumsum()
+    tat_mins = tat_mins + flight_mins
+    airframe_data.loc[:,'TAT Mins'] = tat_mins.astype(int)
+    return airframe_data
 
-def Get_Total_Block_Time(journey_log, airframe_log):#(Duration)
-    airframe_log['TOT BLOCK Dur'] = journey_log['TOTAL BLOCK TIME']
-    return airframe_log
+def Add_Block_Time(journey_log, airframe_data):
+    airframe_data.loc[:,'BLOCK Dur'] = journey_log['BLOCK TIME']
+    return airframe_data
 
+def Add_Block_Time_In_Hours(journey_log, airframe_data):
+    airframe_data.loc[:,'BLOCK Hrs'] = journey_log['BT(HOURS)']
+    return airframe_data
+
+def Add_Block_Time_In_Minutes(journey_log, airframe_data):
+    airframe_data.loc[:,'BLOCK Mins'] = journey_log['BT(MINUTES)']
+    return airframe_data
+
+def Add_Total_Block_Time(journey_log, airframe_data):
+    airframe_data.loc[:,'TOT BLOCK Dur'] = journey_log['TOTAL BLOCK TIME']
+    return airframe_data
+
+def Add_Total_Block_Time_In_Hours(journey_log, airframe_data):#(Duration)
+    airframe_data.loc[:,'TOT BLOCK Hrs'] = journey_log['TOTB(HOURS)']
+    return airframe_data
+
+def Add_Total_Block_Time_In_Minutes(journey_log, airframe_data):#(Duration)
+    airframe_data.loc[:,'TOT BLOCK Mins'] = journey_log['TOTB(MINUTES)']
+    return airframe_data
 
 def Airframe_Logbook_Headers():
     """
@@ -107,7 +141,7 @@ def Airframe_Logbook_Headers():
         'BLOCK Hrs': 'BT\nHrs', #journey log
         'BLOCK Mins': 'BT\nMins', #journey log
         'BLOCK Dur': 'BT', #journey log
-        'TOT BLOCK hrs': 'TotB\nHrs', #journey log
+        'TOT BLOCK Hrs': 'TotB\nHrs', #journey log
         'TOT BLOCK Mins': 'TotB\nMins',	#journey log
         'TOT BLOCK Dur': 'TotB' #journey log
     }
