@@ -1,5 +1,7 @@
 # Code in Place Project
 
+https://codeinplace.stanford.edu/2024/showcase?project=qb9RxsN3cyN6fC2BXBPVtdDQAQ33
+
 This project ... [purpose of the project]
 
 - Journey Log
